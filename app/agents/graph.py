@@ -1,23 +1,23 @@
-from langgraph.graph import StateGraph, START, END
-from langchain_core.messages import BaseMessage, HumanMessage
-from app.agents import prompts
+from langgraph.graph import StateGraph, START, END # type: ignore
+from langchain_core.messages import BaseMessage, HumanMessage # type: ignore
 from state import GroceryState
-from prompts import llm, model, GROCERY_PROMPT
+from prompts import llm, model
 
 
-def ChatGrocery(state: GroceryState, prompts) -> GroceryState:
-    prompt = prompts
-    res = llm.invoke(prompt)
+def ChatGrocery(state: GroceryState) -> GroceryState:
+    prompt = f"""
+            "You are a helpful grocery price assistant. "
+            "When listing prices, respond in structured JSON matching the GroceryPriceResult schema. "
+            "Always include only: product name, app name, numeric price, and product link."
+            """
+    res = model.invoke(prompt)
     return {"messages": res.content}
-
-
-
 
 
 graph = StateGraph(GroceryState)
 # define nodes
 
-graph.add_node('ChatGrocery', ChatGrocery(prompts))
+graph.add_node('ChatGrocery', ChatGrocery)
 graph.add_edge(START, 'ChatGrocery')
 graph.add_edge('ChatGrocery', END)
 
