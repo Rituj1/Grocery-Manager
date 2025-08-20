@@ -5,3 +5,4 @@ langchain-anthropic
 python-dotenv
 langgraph
 langchain-groq
+langchain-community
